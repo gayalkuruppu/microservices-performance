@@ -3,24 +3,23 @@ import ballerina/log;
 import ballerina/io;
 
 endpoint http:Client clientEndpoint {
-    url: "http://localhost:8081/hello"
+    url: "http://localhost:8082/hello"
 };
 // By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
-service<http:Service> hello bind { port: 8080 } {
+service<http:Service> hello bind { port: 8081 } {
 
     // All resources are invoked with arguments of server connector and request.
     @http:ResourceConfig {
         methods: ["GET"],
-        path:"serviceA"
+        path:"serviceB"
     }
     sayHello(endpoint caller, http:Request req) {
         string textValue = check req.getTextPayload();
-        //log:printInfo("Service A");
-        //log:printInfo(textValue);
+
         http:Request reqB = untaint req;
         http:Response res = new;
 
-        var responseB = clientEndpoint->get("/serviceB", message=reqB);
+        var responseB = clientEndpoint->get("/serviceC", message=reqB);
 
         match responseB {
             http:Response resp => {

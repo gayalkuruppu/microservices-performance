@@ -21,12 +21,22 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="bal" value="1" />
+          <entry key="bal" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Ballerina file" value="1" />
+          <entry key="Ballerina file" value="3" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="bal" value="6" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Ballerina file" value="6" />
         </counts>
       </usages-collector>
     </session>
@@ -35,7 +45,29 @@
     <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/serviceA/service-a.bal">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-209">
+              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/serviceB/service-b.bal">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" column="54" selection-start-line="21" selection-start-column="54" selection-end-line="21" selection-end-column="54" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/serviceC/service-c.bal">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="241">
+              <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -51,6 +83,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/serviceA/service-a.bal" />
+        <option value="$PROJECT_DIR$/serviceB/service-b.bal" />
+        <option value="$PROJECT_DIR$/serviceC/service-c.bal" />
       </list>
     </option>
   </component>
@@ -73,6 +107,16 @@
               <item name="chaining-without-db-three" type="b2602c69:ProjectViewProjectNode" />
               <item name="chaining-without-db-three" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="chaining-without-db-three" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chaining-without-db-three" type="462c0819:PsiDirectoryNode" />
+              <item name="serviceA" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chaining-without-db-three" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chaining-without-db-three" type="462c0819:PsiDirectoryNode" />
+              <item name="serviceB" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -83,6 +127,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="Empty file" value="Ballerina Service" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1536848221731" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -96,7 +141,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Ballerina.service-c.bal">
     <configuration default="true" type="BallerinaApplicationRunConfiguration" factoryName="Ballerina">
       <output_file path="$PROJECT_DIR$" />
       <module name="chaining-without-db-three" />
@@ -105,6 +150,42 @@
       <remoteDebuggingHost value="127.0.0.1" />
       <remoteDebuggingPort value="5005" />
       <kind value="MAIN" />
+      <method v="2" />
+    </configuration>
+    <configuration name="service-a.bal" type="BallerinaApplicationRunConfiguration" factoryName="Ballerina" temporary="true">
+      <output_file path="$PROJECT_DIR$" />
+      <module name="serviceA" />
+      <working_directory value="$PROJECT_DIR$/serviceA" />
+      <filePath value="$PROJECT_DIR$/serviceA/service-a.bal" />
+      <myRunKind value="SERVICE" />
+      <remoteDebuggingHost value="127.0.0.1" />
+      <remoteDebuggingPort value="5005" />
+      <kind value="SERVICE" />
+      <package value="serviceA" />
+      <method v="2" />
+    </configuration>
+    <configuration name="service-b.bal" type="BallerinaApplicationRunConfiguration" factoryName="Ballerina" temporary="true">
+      <output_file path="$PROJECT_DIR$" />
+      <module name="serviceB" />
+      <working_directory value="$PROJECT_DIR$/serviceB" />
+      <filePath value="$PROJECT_DIR$/serviceB/service-b.bal" />
+      <myRunKind value="SERVICE" />
+      <remoteDebuggingHost value="127.0.0.1" />
+      <remoteDebuggingPort value="5005" />
+      <kind value="SERVICE" />
+      <package value="serviceB" />
+      <method v="2" />
+    </configuration>
+    <configuration name="service-c.bal" type="BallerinaApplicationRunConfiguration" factoryName="Ballerina" temporary="true">
+      <output_file path="$PROJECT_DIR$" />
+      <module name="serviceC" />
+      <working_directory value="$PROJECT_DIR$/serviceC" />
+      <filePath value="$PROJECT_DIR$/serviceC/service-c.bal" />
+      <myRunKind value="SERVICE" />
+      <remoteDebuggingHost value="127.0.0.1" />
+      <remoteDebuggingPort value="5005" />
+      <kind value="SERVICE" />
+      <package value="serviceC" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="BallerinaRemoteConfiguration" factoryName="Ballerina Remote">
@@ -116,6 +197,18 @@
       <remoteDebuggingPort value="5005" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Ballerina.service-a.bal" />
+      <item itemvalue="Ballerina.service-b.bal" />
+      <item itemvalue="Ballerina.service-c.bal" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Ballerina.service-c.bal" />
+        <item itemvalue="Ballerina.service-b.bal" />
+        <item itemvalue="Ballerina.service-a.bal" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -132,7 +225,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="75" y="44" width="1281" height="704" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Image Layers" />
       <window_info id="Designer" />
@@ -164,8 +256,26 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/serviceC/service-c.bal">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/serviceB/service-b.bal">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="54" selection-start-line="21" selection-start-column="54" selection-end-line="21" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/serviceA/service-a.bal">
-      <provider selected="true" editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-209">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
