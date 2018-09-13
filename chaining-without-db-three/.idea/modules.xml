@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/chaining-without-db-three.iml" filepath="$PROJECT_DIR$/chaining-without-db-three.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serviceA/serviceA.iml" filepath="$PROJECT_DIR$/serviceA/serviceA.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serviceB/serviceB.iml" filepath="$PROJECT_DIR$/serviceB/serviceB.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serviceC/serviceC.iml" filepath="$PROJECT_DIR$/serviceC/serviceC.iml" />
+    </modules>
+  </component>
+</project>
