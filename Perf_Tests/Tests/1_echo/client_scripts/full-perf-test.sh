@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Run Performance Tests for MS4J
+# Run Full Performance Tests for Ballerina - Echo
 # ----------------------------------------------------------------------------
 
 ########################################
@@ -22,7 +22,7 @@
 ########################################
 
 concurrent_users=(1) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(50) # 50 1024 400 1600
+message_sizes=(50 1024) # 400 1600
 test_duration=120 #to be changed to 900
 split_time=1 #to be changed to 5
 
@@ -30,42 +30,33 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-target_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/start.sh
-target_uptime_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime.sh
-target_uptime_path=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime_dir
-
-###Machine A
-host1_ip=172.16.20.60
+host1_ip=172.16.20.176
 host1_port=8080
-host1_username_ip=uok@172.16.20.60
+host1_username_ip=uok@172.16.20.176
 host1_pwd=123
-machineA=machine1
 
-###Machine B
-host2_ip=172.16.20.176
-host2_port=8081
-host2_username_ip=uok@172.16.20.176
-host2_pwd=123
-machineB=machine2
+target_script=/home/uok/Project/Builds/Ballerina/echo/start.sh
+target_uptime_script=/home/uok/Project/Builds/Ballerina/echo/uptime.sh
+target_uptime_path=/home/uok/Project/Builds/Ballerina/echo/uptime_dir
 
 ########################################
 #------------Client Machine------------#
 ########################################
 
 jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
+jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common/jtl-splitter-0.1.1-SNAPSHOT.jar
 
-jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/jtls
-jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/Chaining_Two_Payload_Test.jmx
-dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two/dashboards
-uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two
+jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/echo-with-payload/Echo_Test.jmx
+jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo/jtls
+dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo/dashboards
+uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo
 
 performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/performance-report.py
 
-performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two/summary_${total_users}_users
+performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo/summary_echo
 
 payload_generator_file=/home/uok/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
-payloads_output_file_root=/home/uok/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/client_scripts
+payloads_output_file_root=/home/uok/Projects/ballerina-0-981-1/Tests/echo/client_scripts
 payload_files_postfix=B
 payload_files_extension=json
 
@@ -99,8 +90,7 @@ echo "Finished generating payloads"
 			report_location=$jtl_location/${size}_message/${total_users}_users
 			echo "Report location is ${report_location}"
 			mkdir -p $report_location
-			
-			#MachineA
+
 			#SSH
 			echo "begin SSH"
 			nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
@@ -109,34 +99,14 @@ echo "Finished generating payloads"
 			while true 
 			do
 				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/serviceA)
+				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host1_ip}:${host1_port}/hello/sayHello)
 				if [ $response_code -eq 200 ]; then
-					echo "First Ballerina service has started"
+					echo "Ballerina service has started"
 					break
 				else
 					sleep 10
 					echo "Retrying..."
 					nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-			
-			#MachineB
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host2_pwd} ssh -n ${host2_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host2_ip}:${host2_port}/hello/serviceB)
-				if [ $response_code -eq 200 ]; then
-					echo "Second Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host2_pwd} ssh -n ${host2_username_ip} -f "/bin/bash $target_script" &
 				fi
 			done
 
@@ -145,15 +115,11 @@ echo "Finished generating payloads"
 			# Start JMeter server
 			message=$(<${payloads_output_file_root}/${size}${payload_files_postfix}.${payload_files_extension})
 			
-			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -Jgroup1.data=${message} -n -t ${jmx_file} -l ${report_location}/results.jtl
+			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -n -t ${jmx_file} -l ${report_location}/results.jtl
 
 			# uptime
-			
-			echo "Running Uptime command in first"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path} ${machineA}" &
-			
-			echo "Running Uptime command in second"	
-			nohup sshpass -p ${host2_pwd} ssh -n -f ${host2_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path} ${machineB}" &
+			echo "Running Uptime command"	
+			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path}" &
 
 			echo "Completed Generating JTL files for ${u} users and ${size} size message"
 		done
@@ -166,20 +132,16 @@ echo "Finished generating payloads"
 
 # Copying uptime logs
 
-	echo "Copying uptime logs of first machine to Jmeter client machine"
+	echo "Copying uptime logs of ${u} users test to Jmeter server machine"
 
 	mkdir -p ${uptime_path}
 	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
+
+	echo "Finished Copying uptime logs of ${u} users test to server machine"
 	
-	echo "Copying uptime logs of first machine to Jmeter client machine"
+	echo "Splitting JTL files started"
 
-	mkdir -p ${uptime_path}
-	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs to client machine"
-	
-
-echo "Splitting JTL files started"
+# Split jtls
 
 for size in ${message_sizes[@]}
 do
@@ -195,6 +157,8 @@ do
 done
 
 echo "Splitting JTL files Completed"
+
+# Gnerate Dashboard
 
 echo "Generating Dashboards"
 
@@ -214,6 +178,8 @@ do
 done
 
 echo "Generating Dashboards Completed"
+
+# Generate CSV
 
 echo "Generating the CSV file"
 

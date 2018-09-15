@@ -24,8 +24,8 @@ def readDashboard(dashboard_js_file):
 	jtl_stat["throughput"] = stat_table[12].strip()
 	return jtl_stat
 
-concurrent_users = [2]
-message_sizes= [1024]
+concurrent_users = [1, 2, 50, 100, 300, 500, 700, 1000]
+message_sizes= [400, 10240]
 
 dashboard_files_root = sys.argv[1]
 uptime_reports_root = sys.argv[2]
@@ -36,7 +36,7 @@ csv_file_records = []
 headers = ['size','user', 'average_latency', 'min_latency', 'max_latency', 'percentile_90', 'percentile_95', 'percentile_99', 'throughput', 'error_rate',  'last_one_minutes_la', 'last_five_minutes_la', 'last_fifteen_minutes_la']
 csv_file_records.append(headers)
 
-for size in concurrent_users:
+for size in message_sizes:
 	for user in concurrent_users:
 		dashboard_file_name = dashboard_files_root+"/"+str(size)+"_message/"+str(user)+"_users/content/js/dashboard.js"
 		uptime_file_name = uptime_reports_root+"/uptime_dir/"+str(user)+"_Users_"+str(size)+"_size_uptime.txt"

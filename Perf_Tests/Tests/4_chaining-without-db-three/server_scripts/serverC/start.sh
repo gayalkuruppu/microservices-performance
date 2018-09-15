@@ -17,14 +17,7 @@
 # Run Performance Tests for Ballerina
 # ----------------------------------------------------------------------------
 
+killall java
 
-num_users=$1
-size=$2
-target_uptime_path=$3
-machine_name=$4
-
-
-mkdir -p ${target_uptime_path}
-
-        
-uptime > ${target_uptime_path}/${machine_name}_${num_users}_Users_${size}_size_uptime.txt
+echo "Starting ballerina service on port 8082"
+ballerina run /home/uok/Project/Builds/Ballerina/chaining-without-db-two/service-c.balx
