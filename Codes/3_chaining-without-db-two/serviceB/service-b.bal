@@ -12,12 +12,16 @@ service<http:Service> hello bind { port: 8081 } {
     sayHello(endpoint caller, http:Request req) {
         string textValue = check req.getTextPayload();
 
+        //ommit IO operations
+        //log:printInfo(textValue);
+
         http:Response res = new;
+
         // A util method that can be used to set a string payload.
         res.setPayload(untaint textValue);
 
         // Sends the response back to the caller.
-        caller->respond(res) but { error e => log:printError("Error sending response", err = e) };
+        _ = caller -> respond(res);
     }
 
     @http:ResourceConfig {

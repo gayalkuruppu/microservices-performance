@@ -1,9 +1,8 @@
 import ballerina/http;
 import ballerina/log;
-import ballerina/io;
 
 endpoint http:Client clientEndpoint {
-    url: "http://localhost:8081/hello"
+    url: "http://172.16.20.60:8081/hello"
 };
 // By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
 service<http:Service> hello bind { port: 8080 } {
@@ -14,29 +13,24 @@ service<http:Service> hello bind { port: 8080 } {
         path:"serviceA"
     }
     sayHello(endpoint caller, http:Request req) {
-        string textValue = check req.getTextPayload();
-
+        //forward the recieved request to next
         http:Request reqB = untaint req;
-        http:Response res = new;
 
         var responseB = clientEndpoint->get("/serviceB", message=reqB);
 
         match responseB {
             http:Response resp => {
-                var contentVal = resp.getTextPayload();
-                match contentVal {
-                    string sPayload => {
-                        res.setPayload(untaint sPayload);
-                    }
-                    error err => {
-                        log:printError(err.message, err = err);
-                    }
-                }
+                _ = caller -> respond(resp);
             }
-            error err => { log:printError(err.message, err = err); }
+            error err => {
+                http:Response res = new;
+                res.statusCode = 500;
+                res.setPayload(err.message);
+                _ = caller -> respond(res);
+                //log:printError(err.message, err = err);
+            }
         }
-
         // Sends the response back to the caller.
-        caller->respond(res) but { error e => log:printError("Error sending response", err = e) };
+        //_ = caller -> respond(res);
     }
 }
