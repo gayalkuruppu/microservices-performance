@@ -10,6 +10,7 @@ service<http:Service> hello bind { port: 8082 } {
         path:"serviceC"
     }
     sayHello(endpoint caller, http:Request req) {
+        //log:printInfo("Service C");
         string textValue = check req.getTextPayload();
 
         http:Response res = new;
@@ -17,6 +18,25 @@ service<http:Service> hello bind { port: 8082 } {
         res.setPayload(untaint textValue);
 
         // Sends the response back to the caller.
-        caller->respond(res) but { error e => log:printError("Error sending response", err = e) };
+        _ = caller -> respond(res);
+    }
+
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path:"testC"
+    }
+    sayHellow(endpoint caller, http:Request req) {
+        string textValue = check req.getTextPayload();
+
+        //ommit IO operations
+        //log:printInfo(textValue);
+
+        http:Response res = new;
+
+        // A util method that can be used to set a string payload.
+        res.setPayload(untaint textValue);
+
+        // Sends the response back to the caller.
+        _ = caller -> respond(res);
     }
 }
