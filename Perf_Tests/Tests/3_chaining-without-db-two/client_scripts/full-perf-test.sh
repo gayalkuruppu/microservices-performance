@@ -52,7 +52,7 @@ host2_pwd=123
 ########################################
 
 jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common/jtl-splitter-0.1.1-SNAPSHOT
+jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
 
 jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/jtls
 jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/Chaining_Two_Payload_Test.jmx
@@ -108,7 +108,7 @@ echo "Finished generating payloads"
 			while true 
 			do
 				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/serviceA)
+				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/testA)
 				if [ $response_code -eq 200 ]; then
 					echo "First Ballerina service has started"
 					break
@@ -128,7 +128,7 @@ echo "Finished generating payloads"
 			while true 
 			do
 				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host2_ip}:${host2_port}/hello/serviceB)
+				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host2_ip}:${host2_port}/hello/testB)
 				if [ $response_code -eq 200 ]; then
 					echo "Second Ballerina service has started"
 					break
@@ -187,7 +187,7 @@ do
 		total_users=$(($u))
 		jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
 		
-		java -jar ${jtl_splitter_path} -f $jtl_file -t ${split_time_min} -d	
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t $split_time -d	
 		
 		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
 	done

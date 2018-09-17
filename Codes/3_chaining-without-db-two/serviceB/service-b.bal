@@ -1,39 +1,45 @@
 import ballerina/http;
+import ballerina/mysql;
 import ballerina/log;
 
-// By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
-service<http:Service> hello bind { port: 8081 } {
+endpoint mysql:Client testDB {
+    host: "localhost",
+    port: 3306,
+    name: "type1SportsNewsDb",
+    username: "root",
+    password: "user",
+    poolOptions: { maximumPoolSize: 100 },
+    dbOptions: { useSSL: false }
+};
 
-    // All resources are invoked with arguments of server connector and request.
-    @http:ResourceConfig {
-        methods: ["GET"],
-        path:"serviceB"
-    }
-    sayHello(endpoint caller, http:Request req) {
-        string textValue = check req.getTextPayload();
+service<http:Service> serviceB bind { port: 8081 } {
 
-        //ommit IO operations
-        //log:printInfo(textValue);
-
+    getAll(endpoint caller, http:Request req) {
         http:Response res = new;
+        var selectRet = testDB->select("SELECT * FROM type1SportsNewsDb.news;", ());
+        table dt;
+        match selectRet {
+            table tableReturned => {
+                dt = tableReturned;
 
-        // A util method that can be used to set a string payload.
-        res.setPayload(untaint textValue);
-
-        // Sends the response back to the caller.
+                //convert to json
+                var jsonConversionRet = <json>dt;
+                match jsonConversionRet {
+                    json jsonRes => {
+                        res.setPayload(untaint jsonRes);
+                    }
+                    error e => {
+                        //log:printError(e.message);
+                        res.statusCode = 500;
+                        res.setPayload("Internal error");
+                    }
+                }
+            }
+            error e => {
+                res.statusCode = 500;
+                res.setPayload("Internal error");
+            }
+        }
         _ = caller -> respond(res);
-    }
-
-    @http:ResourceConfig {
-        methods: ["GET"],
-        path:"test"
-    }
-    sayHellow(endpoint caller, http:Request req) {
-        http:Response res = new;
-
-        res.setPayload("Hello, World!");
-
-        // Sends the response back to the caller.
-        caller->respond(res) but { error e => log:printError("Error sending response", err = e) };
     }
 }

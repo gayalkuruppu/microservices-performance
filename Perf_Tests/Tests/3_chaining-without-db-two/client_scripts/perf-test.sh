@@ -21,8 +21,8 @@
 #------------Test-Variables--------------#
 ########################################
 
-concurrent_users=(1) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(50) # 50 1024 400 1600
+concurrent_users=(1000) #to be changed 1 2 50 100 300 500 700 1000 
+message_sizes=(10240) # 50 1024 400 1600
 test_duration=120 #to be changed to 900
 split_time=1 #to be changed to 5
 
@@ -72,6 +72,7 @@ payload_files_extension=json
 #------------Test Begins-------------#
 ########################################
 
+
 #Generate payloads
 
 echo "Generating Payloads"
@@ -108,7 +109,7 @@ echo "Finished generating payloads"
 			while true 
 			do
 				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/serviceA)
+				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/testA)
 				if [ $response_code -eq 200 ]; then
 					echo "First Ballerina service has started"
 					break
@@ -128,7 +129,7 @@ echo "Finished generating payloads"
 			while true 
 			do
 				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host2_ip}:${host2_port}/hello/serviceB)
+				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host2_ip}:${host2_port}/hello/testB)
 				if [ $response_code -eq 200 ]; then
 					echo "Second Ballerina service has started"
 					break
@@ -176,4 +177,19 @@ echo "Finished generating payloads"
 	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
 
 	echo "Finished Copying uptime logs to client machine"
+	
+echo "Splitting JTL files started"
+
+for size in ${message_sizes[@]}
+do
+	for u in ${concurrent_users[@]}
+	do
+		total_users=$(($u))
+		jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
+		
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t $split_time -d	
+		
+		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
+	done
+done
 	
