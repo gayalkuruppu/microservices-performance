@@ -30,9 +30,9 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-target_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/start.sh
-target_uptime_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime.sh
-target_uptime_path=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime_dir
+target_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-three/start.sh
+target_uptime_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-three/uptime.sh
+target_uptime_path=/home/uok/Project/Builds/Ballerina/chaining-without-db-three/uptime_dir
 
 ###Machine A
 host1_ip=172.16.20.60
@@ -222,7 +222,7 @@ do
 		total_users=$(($u))
 		jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
 		
-		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time_min} -d	
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time} -d	
 		
 		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
 	done

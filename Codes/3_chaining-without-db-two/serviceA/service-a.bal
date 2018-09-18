@@ -1,65 +1,54 @@
 import ballerina/http;
-import ballerina/mysql;
 import ballerina/log;
-import ballerina/io;
 
 endpoint http:Client clientEndpoint {
-    url: "http://localhost:8081/serviceB"
+    url: "http://172.16.20.60:8081/hello"
 };
+// By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
+service<http:Service> hello bind { port: 8080 } {
 
-endpoint mysql:Client testDB {
-    host: "localhost",
-    port: 3306,
-    name: "type1NewsDb",
-    username: "root",
-    password: "user",
-    poolOptions: { maximumPoolSize: 100 },
-    dbOptions: { useSSL: false }
-};
+    // All resources are invoked with arguments of server connector and request.
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path:"serviceA"
+    }
+    sayHello(endpoint caller, http:Request req) {
+        //forward the recieved request to next
+        http:Request reqB = untaint req;
 
-service<http:Service> serviceA bind { port: 8080 } {
+        var responseB = clientEndpoint->get("/serviceB", message=reqB);
 
-    getAll(endpoint caller, http:Request req) {
-        http:Response res = new;
-        var selectRet = testDB->select("SELECT * FROM type1NewsDb.news;", ());
-
-        table dt;
-        match selectRet {
-            table tableReturned => {
-                dt = tableReturned;
-                //convert to json
-                var jsonConversionRet = <json>dt;
-
-                match jsonConversionRet {
-                    json jsonRes => {
-
-                        var responseB = clientEndpoint->get("/getAll");
-
-                        match responseB {
-                            http:Response resp => {
-                                json newsB = check resp.getJsonPayload();
-                                log:printDebug(jsonRes.toString());
-                                res.setPayload({"PoliticalFamousNews": untaint jsonRes, "SportsNews":untaint newsB});
-                            }
-                            error err => {
-                                res.statusCode = 500;
-                                res.setPayload("Internal Error");
-                            }
-                        }
-                    }
-                    error e => {
-                        //log:printError(e.message);
-                        res.statusCode = 500;
-                        res.setPayload("Internal error");
-                    }
-                }
+        match responseB {
+            http:Response resp => {
+                _ = caller -> respond(resp);
             }
-            error e => {
+            error err => {
+                http:Response res = new;
                 res.statusCode = 500;
-                res.setPayload("Internal error");
+                res.setPayload("Internal Error");
+                _ = caller -> respond(res);
+                //log:printError(err.message, err = err);
             }
         }
+        // Sends the response back to the caller.
+        //_ = caller -> respond(res);
+    }
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path:"testA"
+    }
+    sayHellow(endpoint caller, http:Request req) {
+        string textValue = check req.getTextPayload();
 
+        //ommit IO operations
+        //log:printInfo(textValue);
+
+        http:Response res = new;
+
+        // A util method that can be used to set a string payload.
+        res.setPayload(untaint textValue);
+
+        // Sends the response back to the caller.
         _ = caller -> respond(res);
     }
 }

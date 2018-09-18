@@ -44,14 +44,14 @@ target_uptime_path=/home/uok/Project/Builds/Ballerina/echo/uptime_dir
 ########################################
 
 jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common/jtl-splitter-0.1.1-SNAPSHOT.jar
+jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
 
 jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/echo-with-payload/Echo_Test.jmx
 jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo/jtls
 dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo/dashboards
 uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo
 
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/performance-report.py
+performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/with_single_machine/performance-report.py
 
 performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo/summary_echo
 
@@ -150,7 +150,7 @@ do
 		total_users=$(($u))
 		jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
 		
-		java -jar ${jtl_splitter_path} -f $jtl_file -t ${split_time_min} -d	
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time_min} -d	
 		
 		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
 	done
