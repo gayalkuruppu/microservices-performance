@@ -46,7 +46,7 @@ host2_ip=172.16.53.70
 host2_port=8081
 host2_username_ip=fct@172.16.53.70
 host2_pwd=123
-host1_machine_num=2
+host2_machine_num=2
 
 ########################################
 #------------Client Machine------------#
