@@ -14,15 +14,15 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Run Full Performance Tests for Ballerina - Chaining with two services without DB
+# Run Performance Tests for Ballerina - Chaining with two services without DB
 # ----------------------------------------------------------------------------
 
 ########################################
 #------------Test-Variables--------------#
 ########################################
 
-concurrent_users=(1) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(50) # 50 1024 400 1600
+concurrent_users=(1000) #to be changed 1 2 50 100 300 500 700 1000 
+message_sizes=(1024) # 50 1024 400 1600
 test_duration=120 #to be changed to 900
 split_time=1 #to be changed to 5
 
@@ -30,41 +30,41 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-target_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/start.sh
-target_uptime_script=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime.sh
-target_uptime_path_machineA=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime_dir_A
-target_uptime_path_machineB=/home/uok/Project/Builds/Ballerina/chaining-without-db-two/uptime_dir_B
+target_script=/home/fct/Project/Builds/Ballerina/chaining-without-db-two/start.sh
+target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-without-db-two/uptime.sh
+target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-without-db-two/uptime_dir
 
 ###Machine A
-host1_ip=172.16.20.60
+host1_ip=172.16.53.76
 host1_port=8080
-host1_username_ip=uok@172.16.20.60
+host1_username_ip=fct@172.16.53.76
 host1_pwd=123
+host1_machine_num=1
 
 ###Machine B
-host2_ip=172.16.20.176
+host2_ip=172.16.53.70
 host2_port=8081
-host2_username_ip=uok@172.16.20.176
+host2_username_ip=fct@172.16.53.70
 host2_pwd=123
+host1_machine_num=2
 
 ########################################
 #------------Client Machine------------#
 ########################################
 
-jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
+jmeter_path=/home/fct/Downloads/Software/JMeter/apache-jmeter-4.0/bin
+jtl_splitter_path=/home/fct/Projects/ballerina-0-981-1/common
 
-jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/jtls
-jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/Chaining_Two_Payload_Test.jmx
-dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two/dashboards
-uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two
+jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/chaining-without-db-two/jtls
+jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/Chaining_Two_Payload_Test.jmx
+dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-without-db-two/dashboards
+uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-without-db-two
 
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/performance-report.py
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/with_two_machines/performance-report.py
+performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-without-db-two/summary_chaining_two
 
-performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/chaining-without-db-two/summary_${total_users}_users
-
-payload_generator_file=/home/uok/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
-payloads_output_file_root=/home/uok/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/client_scripts
+payload_generator_file=/home/fct/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
+payloads_output_file_root=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-without-db-two/client_scripts
 payload_files_postfix=B
 payload_files_extension=json
 
@@ -149,10 +149,10 @@ echo "Finished generating payloads"
 			# uptime
 			
 			echo "Running Uptime command in first"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path_machineA}" &
+			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path} ${host1_machine_num}" &
 			
 			echo "Running Uptime command in second"	
-			nohup sshpass -p ${host2_pwd} ssh -n -f ${host2_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path_machineB}" &
+			nohup sshpass -p ${host2_pwd} ssh -n -f ${host2_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path} ${host2_machine_num}" &
 
 			echo "Completed Generating JTL files for ${u} users and ${size} size message"
 		done
@@ -170,14 +170,13 @@ echo "Finished generating payloads"
 	mkdir -p ${uptime_path}
 	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
 	
-	echo "Copying uptime logs of first machine to Jmeter client machine"
+	echo "Copying uptime logs of second machine to Jmeter client machine"
 
 	mkdir -p ${uptime_path}
 	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
 
 	echo "Finished Copying uptime logs to client machine"
 	
-
 echo "Splitting JTL files started"
 
 for size in ${message_sizes[@]}
@@ -192,7 +191,7 @@ do
 		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
 	done
 done
-
+	
 echo "Splitting JTL files Completed"
 
 echo "Generating Dashboards"
@@ -202,11 +201,11 @@ do
 	for u in ${concurrent_users[@]}
 	do	
 		total_users=$(($u))
-		report_location=${jtl_location}/${size}_message/${total_users}_users/Dashboard
+		report_location=${dashboards_path}/${size}_message/${total_users}_users
 		echo "Report location is ${report_location}"
 		mkdir -p $report_location
 		
-		${path_jmeter}/jmeter -g  ${jtl_location}/${size}_message/${total_users}_users/results-measurement.jtl -o $report_location	
+		${jmeter_path}/jmeter -g  ${jtl_location}/${size}_message/${total_users}_users/results-measurement.jtl -o $report_location	
 
 		echo "Generating dashboard for ${size}B message size and ${u} users test completed"
 	done
@@ -214,8 +213,12 @@ done
 
 echo "Generating Dashboards Completed"
 
+
+
+
 echo "Generating the CSV file"
 
 python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
 
 echo "Finished generating CSV file"
+
