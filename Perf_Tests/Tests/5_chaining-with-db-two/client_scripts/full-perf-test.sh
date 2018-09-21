@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Run Performance Tests for Ballerina - Chaining with two services without DB
+# Run Performance Tests for Ballerina - Chaining with two services with DB
 # ----------------------------------------------------------------------------
 
 ########################################
