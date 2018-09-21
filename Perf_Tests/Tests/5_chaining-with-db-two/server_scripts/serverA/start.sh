@@ -19,5 +19,5 @@
 
 killall java
 
-echo "Starting ballerina service on port 8081"
-ballerina run /home/fct/Project/Builds/Ballerina/chaining-without-db-two/service-b.balx
+echo "Starting ballerina service on port 8080"
+ballerina run /home/fct/Project/Builds/Ballerina/chaining-with-db-two/service-a.balx
