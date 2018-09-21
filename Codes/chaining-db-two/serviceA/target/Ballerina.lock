@@ -1,0 +1,10 @@
+[project]
+name = ""
+version = ""
+lockfileversion = "1"
+ballerinaversion = "0.981.1"
+packages = [ "service-a.bal" ]
+
+[[package]] 
+name = "service-a.bal"
+
