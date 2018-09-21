@@ -21,10 +21,10 @@
 #------------Test-Variables--------------#
 ########################################
 
-concurrent_users=(1000) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(1024) # 50 1024 400 1600
-test_duration=120 #to be changed to 900
-split_time=1 #to be changed to 5
+concurrent_users=(1 2 50 100 300 500 700 1000) #to be changed 1 2 50 100 300 500 700 1000 
+message_sizes=(50 400 1024) # 50 1024 400 1600    50 400 1024
+test_duration=900 #to be changed to 900
+split_time=5 #to be changed to 5
 
 ########################################
 #------------Host Machine--------------#
@@ -193,32 +193,4 @@ do
 done
 	
 echo "Splitting JTL files Completed"
-
-echo "Generating Dashboards"
-
-for size in ${message_sizes[@]}
-do
-	for u in ${concurrent_users[@]}
-	do	
-		total_users=$(($u))
-		report_location=${dashboards_path}/${size}_message/${total_users}_users
-		echo "Report location is ${report_location}"
-		mkdir -p $report_location
-		
-		${jmeter_path}/jmeter -g  ${jtl_location}/${size}_message/${total_users}_users/results-measurement.jtl -o $report_location	
-
-		echo "Generating dashboard for ${size}B message size and ${u} users test completed"
-	done
-done
-
-echo "Generating Dashboards Completed"
-
-
-
-
-echo "Generating the CSV file"
-
-python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
-
-echo "Finished generating CSV file"
 

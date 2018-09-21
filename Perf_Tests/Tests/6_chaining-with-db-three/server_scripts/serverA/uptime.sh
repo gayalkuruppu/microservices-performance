@@ -19,10 +19,9 @@
 
 
 num_users=$1
-size=$2
-target_uptime_path=$3
-machineNum=$4
+target_uptime_path=$2
+machineNum=$3
 
 mkdir -p ${target_uptime_path}
 
-uptime > ${target_uptime_path}/${machineNum}_machine_${num_users}_Users_${size}_size_uptime.txt
+uptime > ${target_uptime_path}/${machineNum}_machine_${num_users}_Users_uptime.txt
