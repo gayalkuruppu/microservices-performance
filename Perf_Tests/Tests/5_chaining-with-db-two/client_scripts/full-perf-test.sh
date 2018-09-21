@@ -59,12 +59,13 @@ jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-two/Chainin
 dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two/dashboards
 uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two
 
-performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/with_two_machines/performance-report-db.py
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_two_machines/performance-report.py
 performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two/summary_chaining_two_db
 
 ########################################
 #------------Test Begins-------------#
 ########################################
+
 
 # Generating JTL files
 
@@ -186,4 +187,8 @@ echo "Generating Dashboards"
 
 echo "Generating Dashboards Completed"
 
+echo "Generating the CSV file"
 
+python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
+
+echo "Finished generating CSV file"

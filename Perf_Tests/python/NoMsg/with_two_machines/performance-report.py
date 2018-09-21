@@ -25,53 +25,53 @@ def readDashboard(dashboard_js_file):
 	return jtl_stat
 
 concurrent_users = [1, 2, 50, 100, 300, 500, 700, 1000]
-message_sizes= [400, 10240]
+message_sizes= [50, 400, 1024]
 
 dashboard_files_root = sys.argv[1]
 uptime_reports_root = sys.argv[2]
 output_csv_file = sys.argv[3]
 
 csv_file_records = []
-headers = ['size','user', 'average_latency', 'min_latency', 'max_latency', 'percentile_90', 'percentile_95', 'percentile_99', 'throughput', 'error_rate',  'A_last_one_minutes_la', 'A_last_five_minutes_la', 'A_last_fifteen_minutes_la', 'B_last_one_minutes_la', 'B_last_five_minutes_la', 'B_last_fifteen_minutes_la']
-#headers = ['size','user', 'average_latency', 'min_latency', 'max_latency', 'percentile_90', 'percentile_95', 'percentile_99', 'throughput', 'error_rate',  'last_one_minutes_la', 'last_five_minutes_la', 'last_fifteen_minutes_la']
+headers = ['user', 'average_latency', 'min_latency', 'max_latency', 'percentile_90', 'percentile_95', 'percentile_99', 'throughput', 'error_rate',  'A_last_one_minutes_la', 'A_last_five_minutes_la', 'A_last_fifteen_minutes_la', 'B_last_one_minutes_la', 'B_last_five_minutes_la', 'B_last_fifteen_minutes_la']
+#headers = ['user', 'average_latency', 'min_latency', 'max_latency', 'percentile_90', 'percentile_95', 'percentile_99', 'throughput', 'error_rate',  'last_one_minutes_la', 'last_five_minutes_la', 'last_fifteen_minutes_la']
 csv_file_records.append(headers)
 
-for size in message_sizes:
-	for user in concurrent_users:
-		dashboard_file_name = dashboard_files_root+"/"+str(size)+"_message/"+str(user)+"_users/content/js/dashboard.js"
-		#uptime_file_name = uptime_reports_root+"/uptime_dir/"+str(user)+"_Users_"+str(size)+"_size_uptime.txt"
-		uptime_file_name1 = uptime_reports_root+"/uptime_dir/"+"1_machine_"+str(user)+"_Users_"+str(size)+"_size_uptime.txt"
-		uptime_file_name2 = uptime_reports_root+"/uptime_dir/"+"2_machine_"+str(user)+"_Users_"+str(size)+"_size_uptime.txt"
-		
-		jtl_stat = readDashboard(dashboard_file_name)
 
-		average_latency = jtl_stat["average"]
-		min_latency = jtl_stat["min"]
-		max_latency = jtl_stat["max"]
-		percentile_90= jtl_stat["percentile_90"]
-		percentile_95 = jtl_stat["percentile_95"]
-		percentile_99 = jtl_stat["percentile_99"]
-		throughput = jtl_stat["throughput"]
-		error_rate = jtl_stat["error"]
+for user in concurrent_users:
+	dashboard_file_name = dashboard_files_root+"/"+str(user)+"_users/content/js/dashboard.js"
+	#uptime_file_name = uptime_reports_root+"/uptime_dir/"+str(user)+"_Users_"+str(size)+"_size_uptime.txt"
+	uptime_file_name1 = uptime_reports_root+"/uptime_dir/"+"1_machine_"+str(user)+"_Users_uptime.txt"
+	uptime_file_name2 = uptime_reports_root+"/uptime_dir/"+"2_machine_"+str(user)+"_Users_uptime.txt"
 
-		#load_averages = getLoadAverages(uptime_file_name)
-		#last_one_minutes_la = load_averages[1]
-		#last_five_minutes_la = load_averages[5]
-		#last_fifteen_minutes_la = load_averages[15]
-		
-		A_load_averages = getLoadAverages(uptime_file_name1)
-		A_last_one_minutes_la = A_load_averages[1]
-		A_last_five_minutes_la = A_load_averages[5]
-		A_last_fifteen_minutes_la = A_load_averages[15]
-		
-		B_load_averages = getLoadAverages(uptime_file_name2)
-		B_last_one_minutes_la = B_load_averages[1]
-		B_last_five_minutes_la = B_load_averages[5]
-		B_last_fifteen_minutes_la = B_load_averages[15]
+	jtl_stat = readDashboard(dashboard_file_name)
 
-		#row = [size,user, average_latency, min_latency, max_latency, percentile_90, percentile_95, percentile_99, throughput, error_rate, last_one_minutes_la, last_five_minutes_la, last_fifteen_minutes_la]
-		row = [size,user, average_latency, min_latency, max_latency, percentile_90, percentile_95, percentile_99, throughput, error_rate, A_last_one_minutes_la, A_last_five_minutes_la, A_last_fifteen_minutes_la, B_last_one_minutes_la, B_last_five_minutes_la, B_last_fifteen_minutes_la]
-		csv_file_records.append(row)		
+	average_latency = jtl_stat["average"]
+	min_latency = jtl_stat["min"]
+	max_latency = jtl_stat["max"]
+	percentile_90= jtl_stat["percentile_90"]
+	percentile_95 = jtl_stat["percentile_95"]
+	percentile_99 = jtl_stat["percentile_99"]
+	throughput = jtl_stat["throughput"]
+	error_rate = jtl_stat["error"]
+
+	#load_averages = getLoadAverages(uptime_file_name)
+	#last_one_minutes_la = load_averages[1]
+	#last_five_minutes_la = load_averages[5]
+	#last_fifteen_minutes_la = load_averages[15]
+
+	A_load_averages = getLoadAverages(uptime_file_name1)
+	A_last_one_minutes_la = A_load_averages[1]
+	A_last_five_minutes_la = A_load_averages[5]
+	A_last_fifteen_minutes_la = A_load_averages[15]
+
+	B_load_averages = getLoadAverages(uptime_file_name2)
+	B_last_one_minutes_la = B_load_averages[1]
+	B_last_five_minutes_la = B_load_averages[5]
+	B_last_fifteen_minutes_la = B_load_averages[15]
+
+	#row = [user, average_latency, min_latency, max_latency, percentile_90, percentile_95, percentile_99, throughput, error_rate, last_one_minutes_la, last_five_minutes_la, last_fifteen_minutes_la]
+	row = [user, average_latency, min_latency, max_latency, percentile_90, percentile_95, percentile_99, throughput, error_rate, A_last_one_minutes_la, A_last_five_minutes_la, A_last_fifteen_minutes_la, B_last_one_minutes_la, B_last_five_minutes_la, B_last_fifteen_minutes_la]
+	csv_file_records.append(row)		
 
 with open(output_csv_file, "w") as csv_file:
     writer = csv.writer(csv_file, delimiter=',')
