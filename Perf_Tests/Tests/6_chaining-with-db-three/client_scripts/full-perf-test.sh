@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Run Performance Tests for Ballerina - Chaining with three services with DB and Cache
+# Run Performance Tests for Ballerina - Chaining with three services with DB
 # ----------------------------------------------------------------------------
 
 ########################################
@@ -29,9 +29,9 @@ split_time=5 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-target_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-three/start.sh
-target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-three/uptime.sh
-target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-three/uptime_dir
+target_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-three/start.sh
+target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-three/uptime.sh
+target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-three/uptime_dir
 
 ###Machine A
 host1_ip=172.16.53.77
@@ -61,22 +61,24 @@ host3_machine_num=3
 jmeter_path=/home/fct/Downloads/Software/JMeter/apache-jmeter-4.0/bin
 jtl_splitter_path=/home/fct/Projects/ballerina-0-981-1/common
 
-jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-three/jtls
-jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-caching-three/Chaining_Three_DB_Cache_Test.jmx
-dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-three/dashboards
-uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-three
+jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-three/jtls
+jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-three/Chaining_Three_DB_Test.jmx
+dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-three/dashboards
+uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-three
 
 performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_three_machines/performance-report.py
-performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-three/summary_chaining_db_caching_three
+performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-three/summary_chaining_db_three
+
+payload_generator_file=/home/fct/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
+payloads_output_file_root=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-three/client_scripts
+payload_files_postfix=B
+payload_files_extension=json
 
 ########################################
-#------------Test Begins-------------#
+#------------Test Begins---------------#
 ########################################
-
 
 # Generating JTL files
-
-		echo "Tests for ${size} size message"
 
 		for u in ${concurrent_users[@]}
 		do
@@ -147,7 +149,7 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 				fi
 			done
 			
-			echo "Begin test for ${u} users and ${size} size message"
+			echo "Begin test for ${u} users"
 
 			# Start JMeter server
 			
@@ -164,14 +166,29 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 			echo "Running Uptime command in Third"	
 			nohup sshpass -p ${host3_pwd} ssh -n -f ${host3_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path} ${host3_machine_num}" &
 
-			echo "Completed Generating JTL files for ${u} users and ${size} size message"
-		
-
-		
+			echo "Completed Generating JTL files for ${u} users"
 
 	done
 
-	echo "Completed Generating JTL files for ${u} users"
+	echo "Completed Generating JTL files"
+
+# Split JTLs
+
+echo "Splitting JTL files started"
+
+
+	for u in ${concurrent_users[@]}
+	do
+		total_users=$(($u))
+		jtl_file=${jtl_location}/${total_users}_users/results.jtl
+		
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time} -d	
+		
+		echo "Splitting jtl file for ${u} users test completed"
+	done
+
+
+echo "Splitting JTL files Completed"
 
 # Copying uptime logs
 
@@ -191,23 +208,8 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 	sshpass -p ${host3_pwd} scp -r ${host3_username_ip}:${target_uptime_path} ${uptime_path}
 	
 	echo "Finished Copying uptime logs to client machine"
-
-
-echo "Splitting JTL files started"
-
-
-	for u in ${concurrent_users[@]}
-	do
-		total_users=$(($u))
-		jtl_file=${jtl_location}/${total_users}_users/results.jtl
-		
-		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time} -d	
-		
-		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
-	done
-
-
-echo "Splitting JTL files Completed"
+	
+# Generating dashboards
 
 echo "Generating Dashboards"
 
@@ -220,11 +222,13 @@ echo "Generating Dashboards"
 		
 		${jmeter_path}/jmeter -g  ${jtl_location}/${total_users}_users/results-measurement.jtl -o $report_location	
 
-		echo "Generating dashboard for ${size}B message size and ${u} users test completed"
+		echo "Generating dashboard for ${u} users test completed"
 	done
 
 
 echo "Generating Dashboards Completed"
+
+#Generate CSV
 
 echo "Generating the CSV file"
 

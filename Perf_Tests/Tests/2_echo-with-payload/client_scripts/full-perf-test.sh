@@ -30,9 +30,9 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-host1_ip=172.16.20.176
+host1_ip=172.16.53.70
 host1_port=8080
-host1_username_ip=uok@172.16.20.176
+host1_username_ip=fct@172.16.53.70
 host1_pwd=123
 
 target_script=/home/uok/Project/Builds/Ballerina/echo-with-payload/start.sh
@@ -51,7 +51,7 @@ jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/jtls
 dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/dashboards
 uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload
 
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/performance-report.py
+performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/with_single_machine/performance-report.py
 
 performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/summary_echo_with_payload
 
@@ -128,7 +128,7 @@ echo "Finished generating payloads"
 
 	done
 
-	echo "Completed Generating JTL files for ${u} users"
+	echo "Completed Generating JTL files"
 
 # Copying uptime logs
 
@@ -138,23 +138,23 @@ echo "Finished generating payloads"
 	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
 
 	echo "Finished Copying uptime logs of ${u} users test to server machine"
-	
-	echo "Splitting JTL files started"
 
 # Split jtls
 
-for size in ${message_sizes[@]}
-do
-	for u in ${concurrent_users[@]}
+echo "Splitting JTL files started"
+
+	for size in ${message_sizes[@]}
 	do
-		total_users=$(($u))
-		jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
-		
-		java -jar ${jtl_splitter_path} -f $jtl_file -t ${split_time_min} -d	
-		
-		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
+		for u in ${concurrent_users[@]}
+		do
+			total_users=$(($u))
+			jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
+
+			java -jar ${jtl_splitter_path} -f $jtl_file -t ${split_time_min} -d	
+
+			echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
+		done
 	done
-done
 
 echo "Splitting JTL files Completed"
 
@@ -167,7 +167,7 @@ do
 	for u in ${concurrent_users[@]}
 	do	
 		total_users=$(($u))
-		report_location=${jtl_location}/${size}_message/${total_users}_users/Dashboard
+		report_location=${jtl_location}/${size}_message/${total_users}_users
 		echo "Report location is ${report_location}"
 		mkdir -p $report_location
 		

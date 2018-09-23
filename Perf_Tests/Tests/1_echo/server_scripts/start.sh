@@ -19,5 +19,5 @@
 
 killall java
 
-echo "Startinhg ballerina service on port 8080"
-ballerina run /home/uok/echo-service-0-981-1.balx
+echo "Starting ballerina service on port 8080"
+ballerina run /home/fct/Project/Builds/Ballerina/echo/echo-service-0-981-1.balx

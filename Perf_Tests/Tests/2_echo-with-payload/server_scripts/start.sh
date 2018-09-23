@@ -20,4 +20,4 @@
 killall java
 
 echo "Starting ballerina service on port 8080"
-ballerina run /home/uok/Project/Builds/Ballerina/echo-with-payload/echo-with-payload.balx
+ballerina run /home/fct/Project/Builds/Ballerina/echo-with-payload/echo-with-payload.balx

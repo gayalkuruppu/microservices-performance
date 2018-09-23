@@ -25,4 +25,4 @@ target_uptime_path=$2
 mkdir -p ${target_uptime_path}
 
         
-uptime > ${target_uptime_path}/${num_users}_Users_${size}_size_uptime.txt
+uptime > ${target_uptime_path}/${num_users}_Users_uptime.txt

@@ -18,7 +18,7 @@
 # ----------------------------------------------------------------------------
 
 ########################################
-#------------Test-Variables--------------#
+#------------Test-Variables------------#
 ########################################
 
 concurrent_users=(1 2 50 100 300 500 700 1000) #to be changed 1 2 50 100 300 500 700 1000 
@@ -66,11 +66,7 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 #------------Test Begins-------------#
 ########################################
 
-
 # Generating JTL files
-
-
-		echo "Tests for ${size} size message"
 
 		for u in ${concurrent_users[@]}
 		do
@@ -121,7 +117,7 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 				fi
 			done
 
-			echo "Begin test for ${u} users and ${size} size message"
+			echo "Begin test for ${u} users"
 			
 			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -n -t ${jmx_file} -l ${report_location}/results.jtl
 
@@ -133,13 +129,26 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 			echo "Running Uptime command in second"	
 			nohup sshpass -p ${host2_pwd} ssh -n -f ${host2_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path} ${host2_machine_num}" &
 
-			echo "Completed Generating JTL files for ${u} users and ${size} size message"
+			echo "Completed Generating JTL files for ${u} users"
 		done
 
-		echo "Completed tests for ${size} size message"
+	echo "Completed Generating JTL files"
+	
+#Split JTLs
 
+echo "Splitting JTL files started"
 
-	echo "Completed Generating JTL files for ${u} users"
+for u in ${concurrent_users[@]}
+	do
+		total_users=$(($u))
+		jtl_file=${jtl_location}/${total_users}_users/results.jtl
+		
+		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t $split_time -d	
+		
+		echo "Splitting jtl file for ${u} users test completed"
+	done
+	
+echo "Splitting JTL files Completed"
 
 # Copying uptime logs
 
@@ -154,21 +163,8 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
 
 	echo "Finished Copying uptime logs to client machine"
-	
-echo "Splitting JTL files started"
 
-for u in ${concurrent_users[@]}
-	do
-		total_users=$(($u))
-		jtl_file=${jtl_location}/${total_users}_users/results.jtl
-		
-		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t $split_time -d	
-		
-		echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
-	done
-
-	
-echo "Splitting JTL files Completed"
+#Generate dashboards
 
 echo "Generating Dashboards"
 
@@ -181,11 +177,13 @@ echo "Generating Dashboards"
 		
 		${jmeter_path}/jmeter -g  ${jtl_location}/${total_users}_users/results-measurement.jtl -o $report_location	
 
-		echo "Generating dashboard for ${size}B message size and ${u} users test completed"
+		echo "Generating dashboard for ${u} users test completed"
 	done
 
 
 echo "Generating Dashboards Completed"
+
+#Generate dashboards
 
 echo "Generating the CSV file"
 
