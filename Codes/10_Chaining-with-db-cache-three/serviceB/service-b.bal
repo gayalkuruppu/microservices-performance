@@ -6,7 +6,7 @@ import ballerina/internal;
 import wso2/redis;
 
 endpoint http:Client clientEndpoint {
-    url: "http://localhost:8082/serviceSports"
+    url: "http://172.16.53.70:8082/serviceSports"
 };
 // url: "http://172.16.53.70:8082/serviceSports"
 // url: "http://localhost:8082/serviceSports"
@@ -57,7 +57,7 @@ service<http:Service> servicePolitical bind { port: 8081 } {
                         error => {}
                     };
 
-                    if(sportsNews.toString().equalsIgnoreCase("Internal Error")){
+                    if(sportsNews.toString().contains("Internal Error")){
                         res.statusCode = 500;
                         res.setPayload({"Error": "Internal Error"});
 
@@ -69,10 +69,10 @@ service<http:Service> servicePolitical bind { port: 8081 } {
                 () => {
                     //io:println("Not Cache");
                     json dbResponse = getNewsFromDatabase();
-                    if(!dbResponse.toString().equalsIgnoreCase("Internal Error")){
+                    if(!dbResponse.toString().contains("Internal Error")){
                         cacheDBResponse(dbResponse);
                     }
-                    if(dbResponse.toString().equalsIgnoreCase("Internal Error") || sportsNews.toString().equalsIgnoreCase("Internal Error")){
+                    if(dbResponse.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
                         res.statusCode = 500;
                         res.setPayload({"Error": "Internal Error"});
                     } else {
@@ -145,6 +145,6 @@ function cacheDBResponse(json dbResp) {
         // Set an expiry time for the cache
         _ = cache->pExpire("key2", 60000);
     } catch (error err) {
-        log:printError(err.message);
+        //log:printError(err.message);
     }
 }

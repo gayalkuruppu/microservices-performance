@@ -44,7 +44,7 @@ service<http:Service> serviceSports bind { port: 8081 } {
                 () => {
 
                     json dbResponse = getNewsFromDatabase();
-                    if (!dbResponse.toString().equalsIgnoreCase("Internal Error")){
+                    if (!dbResponse.toString().contains("Internal Error")){
                         cacheDBResponse(dbResponse);
                         res.setPayload(untaint dbResponse);
                     }else{
@@ -120,6 +120,6 @@ function cacheDBResponse(json dbResp) {
         // Set an expiry time for the cache
         _ = cache->pExpire("key2", 60000);
     }catch (error err) {
-        log:printError(err.message);
+        //log:printError(err.message);
     }
 }

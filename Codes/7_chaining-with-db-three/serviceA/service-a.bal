@@ -47,9 +47,8 @@ service<http:Service> serviceFamous bind { port: 8080 } {
                         json jsonRes => {
                             json ans = jsonRes;
                             log:printDebug(jsonRes.toString());
-                            if(ans.toString().equalsIgnoreCase("Internal Error") || news.toString().equalsIgnoreCase("Internal Error")){
+                            if(ans.toString().contains("Internal Error") || news.toString().contains("Internal Error")){
                                 res.statusCode = 500;
-                                log:printInfo("here4");
                                 res.setPayload("Internal Error");
                                 tableReturned.close();
                             } else {
@@ -58,23 +57,20 @@ service<http:Service> serviceFamous bind { port: 8080 } {
                             }
                         }
                         error e => {
-                            log:printInfo("here1");
-                            log:printError(e.message);
+                            //log:printError(e.message);
                             res.statusCode = 500;
                             res.setPayload({"Error": "Internal Error"});
                         }
                     }
                 }
                 error e => {
-                    log:printError(e.message);
-                    log:printInfo("here2");
+                    //log:printError(e.message);
                     res.statusCode = 500;
                     res.setPayload({"Error": "Internal Error"});
                 }
             }
         } catch (error err) {
-            log:printInfo("here3");
-            log:printError(err.message);
+            //log:printError(err.message);
             res.statusCode = 500;
             res.setPayload({"Error": "Internal Error"});
         }

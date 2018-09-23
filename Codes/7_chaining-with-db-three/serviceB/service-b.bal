@@ -47,7 +47,7 @@ service<http:Service> servicePolitical bind { port: 8081 } {
                         json jsonRes => {
                             json ans = jsonRes;
                             log:printDebug(jsonRes.toString());
-                            if(ans.toString().equalsIgnoreCase("Internal Error") || sportsNews.toString().equalsIgnoreCase("Internal Error")){
+                            if(ans.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
                                 res.statusCode = 500;
                                 res.setPayload("Internal Error");
                                 tableReturned.close();
