@@ -96,6 +96,7 @@ function getNewsFromDatabase() returns json{
                     }
                     error e => {
                         //log:printError(e.message);
+                        tableReturned.close();
                         return {"Error": "Internal Error"};
                     }
                 }
