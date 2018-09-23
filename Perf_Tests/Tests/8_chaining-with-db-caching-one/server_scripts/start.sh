@@ -16,8 +16,8 @@
 # ----------------------------------------------------------------------------
 # Run Performance Tests for Ballerina
 # ----------------------------------------------------------------------------
-
+redis-cli FLUSHALL
 killall java
 
-echo "Starting ballerina service on port 8081"
-ballerina run /home/fct/Project/Builds/Ballerina/chaining-with-db-caching-two/service-b.balx
+echo "Starting ballerina service on port 8080"
+ballerina run /home/fct/Project/Builds/Ballerina/chaining-with-db-caching-one/service-a.balx

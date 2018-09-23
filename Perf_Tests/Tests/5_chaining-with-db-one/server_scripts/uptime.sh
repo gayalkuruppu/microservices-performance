@@ -17,7 +17,10 @@
 # Run Performance Tests for Ballerina
 # ----------------------------------------------------------------------------
 
-killall java
 
-echo "Starting ballerina service on port 8082"
-ballerina run /home/fct/Project/Builds/Ballerina/chaining-with-db-caching-three/service-c.balx
+num_users=$1
+target_uptime_path=$2
+
+mkdir -p ${target_uptime_path}
+
+uptime > ${target_uptime_path}/${num_users}_Users_uptime.txt
