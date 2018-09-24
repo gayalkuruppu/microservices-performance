@@ -4,11 +4,11 @@ import ballerina/io;
 import ballerina/internal;
 
 endpoint http:Client clientEndpointFamousPolitical {
-    url: "http://172.16.53.76:8081/serviceFamousPolitical"
+    url: "http://localhost:8081/serviceFamousPolitical"
 };
 
 endpoint http:Client clientEndpointSports {
-    url: "http://172.16.53.70:8082/serviceSports"
+    url: "http://localhost:8082/serviceSports"
 };
 
 //url: "http://172.16.53.76:8081/serviceFamousPolitical"
