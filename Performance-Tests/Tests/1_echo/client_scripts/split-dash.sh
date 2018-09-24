@@ -58,59 +58,6 @@ performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo
 #------------Test Begins-------------#
 ########################################
 
-# Generating JTL files
-
-	for u in ${concurrent_users[@]}
-	do
-
-		total_users=$(($u))
-
-		report_location=$jtl_location/${total_users}_users
-		echo "Report location is ${report_location}"
-		mkdir -p $report_location
-
-		#SSH
-		echo "begin SSH"
-		nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-
-		#Check Service
-		while true 
-		do
-			echo "Checking service"
-			response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host1_ip}:${host1_port}/hello/sayHello)
-			if [ $response_code -eq 200 ]; then
-				echo "Ballerina service has started"
-				break
-			else
-				sleep 10
-				echo "Retrying..."
-				nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-			fi
-		done
-
-		echo "Begin test for ${u} users"
-
-		${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -n -t ${jmx_file} -l ${report_location}/results.jtl
-
-		# uptime
-		echo "Running Uptime command"	
-		nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path}" &
-
-		echo "Completed Generating JTL files for ${u} users"
-		
-	done
-	
-	echo "Generating JTLs Completed"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of first machine to client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs of first machine to client machine"
-
 # Split jtls
 
 echo "Splitting JTL files started"

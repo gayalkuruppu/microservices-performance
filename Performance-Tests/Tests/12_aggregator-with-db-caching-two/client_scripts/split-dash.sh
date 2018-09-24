@@ -73,119 +73,6 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/aggr
 #------------Test Begins---------------#
 ########################################
 
-# Generating JTL files
-
-		for u in ${concurrent_users[@]}
-		do
-
-			total_users=$(($u))
-
-			report_location=$jtl_location/${total_users}_users
-			echo "Report location is ${report_location}"
-			mkdir -p $report_location
-			
-			#MachineA
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host1_ip}:${host1_port}/serviceAggregator/test)
-				if [ $response_code -eq 200 ]; then
-					echo "First Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-			
-			#MachineB
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host2_pwd} ssh -n ${host2_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host2_ip}:${host2_port}/serviceFamousPolitical/test)
-				if [ $response_code -eq 200 ]; then
-					echo "Second Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host2_pwd} ssh -n ${host2_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-			
-			#MachineC
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host3_pwd} ssh -n ${host3_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host3_ip}:${host3_port}/serviceSports/test)
-				if [ $response_code -eq 200 ]; then
-					echo "Third Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host3_pwd} ssh -n ${host3_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-			
-			echo "Begin test for ${u} users"
-
-			# Start JMeter server
-			
-			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -n -t ${jmx_file} -l ${report_location}/results.jtl
-
-			# uptime
-			
-			echo "Running Uptime command in first"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path} ${host1_machine_num}" &
-			
-			echo "Running Uptime command in second"	
-			nohup sshpass -p ${host2_pwd} ssh -n -f ${host2_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path} ${host2_machine_num}" &
-			
-			echo "Running Uptime command in Third"	
-			nohup sshpass -p ${host3_pwd} ssh -n -f ${host3_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path} ${host3_machine_num}" &
-
-			echo "Completed Generating JTL files for ${u} users"
-
-	done
-
-	echo "Completed Generating JTL files"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of first machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-	
-	echo "Copying uptime logs of second machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
-	
-	echo "Copying uptime logs of third machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host3_pwd} scp -r ${host3_username_ip}:${target_uptime_path} ${uptime_path}
-	
-	echo "Finished Copying uptime logs to client machine"
-
 # Split JTLs
 
 echo "Splitting JTL files started"
@@ -203,7 +90,7 @@ echo "Splitting JTL files started"
 
 
 echo "Splitting JTL files Completed"
-
+	
 # Generating dashboards
 
 echo "Generating Dashboards"

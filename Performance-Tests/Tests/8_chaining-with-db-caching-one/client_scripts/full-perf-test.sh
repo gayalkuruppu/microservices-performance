@@ -51,7 +51,7 @@ jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-caching-one
 dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-one/dashboards
 uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-one
 
-performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machines/performance-report.py
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machine/performance-report.py
 performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-caching-one/summary_chaining_one_db_caching
 
 ########################################
@@ -103,6 +103,15 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 
 	echo "Completed Generating JTL files"
 	
+# Copying uptime logs
+
+	echo "Copying uptime logs of server machine to Jmeter client machine"
+
+	mkdir -p ${uptime_path}
+	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
+
+	echo "Finished Copying uptime logs to client machine"
+	
 # Split JTLs
 	
 echo "Splitting JTL files started"
@@ -119,15 +128,6 @@ echo "Splitting JTL files started"
 
 	
 echo "Splitting JTL files Completed"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of server machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs to client machine"
 
 # Generate dashboards
 

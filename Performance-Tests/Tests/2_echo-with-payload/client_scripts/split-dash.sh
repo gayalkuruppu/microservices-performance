@@ -55,89 +55,9 @@ performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/pytho
 
 performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/summary_echo_with_payload
 
-payload_generator_file=/home/uok/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
-payloads_output_file_root=/home/uok/Projects/ballerina-0-981-1/Tests/echo-with-payload/client_scripts
-payload_files_postfix=B
-payload_files_extension=json
-
 ########################################
 #------------Test Begins-------------#
 ########################################
-
-#Generate payloads
-
-echo "Generating Payloads"
-
-for size in ${message_sizes[@]}
-do
-	echo "Generating ${size}B file"
-	java -jar ${payload_generator_file} --size $size
-done
-
-echo "Finished generating payloads"
-
-# Generating JTL files
-
-	for size in ${message_sizes[@]}
-	do
-		echo "Tests for ${size} size message"
-
-		for u in ${concurrent_users[@]}
-		do
-
-			total_users=$(($u))
-
-			report_location=$jtl_location/${size}_message/${total_users}_users
-			echo "Report location is ${report_location}"
-			mkdir -p $report_location
-
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET -d "hello" http://${host1_ip}:${host1_port}/hello/payloadCheck)
-				if [ $response_code -eq 200 ]; then
-					echo "Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-
-			echo "Begin test for ${u} users and ${size} size message"
-
-			# Start JMeter server
-			message=$(<${payloads_output_file_root}/${size}${payload_files_postfix}.${payload_files_extension})
-			
-			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -Jgroup1.data=${message} -n -t ${jmx_file} -l ${report_location}/results.jtl
-
-			# uptime
-			echo "Running Uptime command"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path}" &
-
-			echo "Completed Generating JTL files for ${u} users and ${size} size message"
-		done
-
-		echo "Completed tests for ${size} size message"
-
-	done
-
-	echo "Completed Generating JTL files"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of ${u} server machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs of server machine"
 
 # Split jtls
 
@@ -158,7 +78,7 @@ echo "Splitting JTL files started"
 
 echo "Splitting JTL files Completed"
 
-# Generate Dashboard
+# Gnerate Dashboard
 
 echo "Generating Dashboards"
 

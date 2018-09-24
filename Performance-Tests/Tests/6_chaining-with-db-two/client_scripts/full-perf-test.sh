@@ -133,7 +133,21 @@ performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chai
 		done
 
 	echo "Completed Generating JTL files"
+
+# Copying uptime logs
+
+	echo "Copying uptime logs of first machine to Jmeter client machine"
+
+	mkdir -p ${uptime_path}
+	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
 	
+	echo "Copying uptime logs of second machine to Jmeter client machine"
+
+	mkdir -p ${uptime_path}
+	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
+
+	echo "Finished Copying uptime logs to client machine"
+
 # Split JTLs
 	
 echo "Splitting JTL files started"
@@ -150,20 +164,6 @@ echo "Splitting JTL files started"
 
 	
 echo "Splitting JTL files Completed"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of first machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-	
-	echo "Copying uptime logs of second machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host2_pwd} scp -r ${host2_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs to client machine"
 
 # Generate dashboards
 

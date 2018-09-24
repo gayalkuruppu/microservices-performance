@@ -44,16 +44,10 @@ target_uptime_path=/home/uok/Project/Builds/Ballerina/echo-with-payload/uptime_d
 ########################################
 
 jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
 
 jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/echo-with-payload/Echo_Payload_Test.jmx
 jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/jtls
-dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/dashboards
 uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload
-
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/with_single_machine/performance-report.py
-
-performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo-with-payload/summary_echo_with_payload
 
 payload_generator_file=/home/uok/Projects/ballerina-0-981-1/common/payload-generator-0.1.1-SNAPSHOT.jar
 payloads_output_file_root=/home/uok/Projects/ballerina-0-981-1/Tests/echo-with-payload/client_scripts
@@ -131,58 +125,11 @@ echo "Finished generating payloads"
 	echo "Completed Generating JTL files"
 
 # Copying uptime logs
-
-	echo "Copying uptime logs of ${u} server machine"
+	sleep 5
+	
+	echo "Copying uptime logs of server machine"
 
 	mkdir -p ${uptime_path}
 	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
 
-	echo "Finished Copying uptime logs of server machine"
-
-# Split jtls
-
-echo "Splitting JTL files started"
-
-	for size in ${message_sizes[@]}
-	do
-		for u in ${concurrent_users[@]}
-		do
-			total_users=$(($u))
-			jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
-
-			java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time_min} -d	
-
-			echo "Splitting jtl file for ${size}B message size and ${u} users test completed"
-		done
-	done
-
-echo "Splitting JTL files Completed"
-
-# Generate Dashboard
-
-echo "Generating Dashboards"
-
-for size in ${message_sizes[@]}
-do
-	for u in ${concurrent_users[@]}
-	do	
-		total_users=$(($u))
-		report_location=${jtl_location}/${size}_message/${total_users}_users
-		echo "Report location is ${report_location}"
-		mkdir -p $report_location
-		
-		${path_jmeter}/jmeter -g  ${jtl_location}/${size}_message/${total_users}_users/results-measurement.jtl -o $report_location	
-
-		echo "Generating dashboard for ${size}B message size and ${u} users test completed"
-	done
-done
-
-echo "Generating Dashboards Completed"
-
-# Generate CSV
-
-echo "Generating the CSV file"
-
-python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
-
-echo "Finished generating CSV file"
+	echo "Finished Copying uptime logs server machine"

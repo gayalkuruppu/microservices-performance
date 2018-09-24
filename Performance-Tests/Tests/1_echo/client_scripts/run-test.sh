@@ -43,16 +43,9 @@ target_uptime_path=/home/uok/Project/Builds/Ballerina/echo/uptime_dir
 ########################################
 
 jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
-
 jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/echo/Echo_Test.jmx
 jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo/jtls
-dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo/dashboards
 uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo
-
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machine/performance-report.py
-
-performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo/summary_echo
 
 ########################################
 #------------Test Begins-------------#
@@ -102,7 +95,9 @@ performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo
 	
 	echo "Generating JTLs Completed"
 
+
 # Copying uptime logs
+	sleep 5
 
 	echo "Copying uptime logs of first machine to client machine"
 
@@ -110,45 +105,3 @@ performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo
 	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
 
 	echo "Finished Copying uptime logs of first machine to client machine"
-
-# Split jtls
-
-echo "Splitting JTL files started"
-
-	for u in ${concurrent_users[@]}
-	do
-		total_users=$(($u))
-		jtl_file=${jtl_location}/${total_users}_users/results.jtl
-		
-		java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time_min} -d	
-		
-		echo "Splitting jtl file for ${u} users test completed"
-	done
-
-echo "Splitting JTL files Completed"
-
-# Generate Dashboard
-
-echo "Generating Dashboards"
-
-	for u in ${concurrent_users[@]}
-	do	
-		total_users=$(($u))
-		report_location=${jtl_location}/${total_users}_users
-		echo "Report location is ${report_location}"
-		mkdir -p $report_location
-		
-		${path_jmeter}/jmeter -g  ${jtl_location}/${total_users}_users/results-measurement.jtl -o $report_location	
-
-		echo "Generating dashboard for ${u} users test completed"
-	done
-
-echo "Generating Dashboards Completed"
-
-# Generate CSV
-
-echo "Generating the CSV file"
-
-python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
-
-echo "Finished generating CSV file"

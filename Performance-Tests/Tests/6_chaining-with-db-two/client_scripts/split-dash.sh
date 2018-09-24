@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # ----------------------------------------------------------------------------
-# Run Performance Tests for Ballerina - Chaining with one services with DB (Singleton)
+# Run Performance Tests for Ballerina - Chaining with two services with DB
 # ----------------------------------------------------------------------------
 
 ########################################
@@ -29,16 +29,23 @@ split_time=5 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-target_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-one/start.sh
-target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-one/uptime.sh
-target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-one/uptime_dir
+target_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-two/start.sh
+target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-two/uptime.sh
+target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-two/uptime_dir
 
 ###Machine A
-host1_ip=172.16.53.70
+host1_ip=172.16.53.76
 host1_port=8080
-host1_username_ip=fct@172.16.53.70
+host1_username_ip=fct@172.16.53.76
 host1_pwd=123
 host1_machine_num=1
+
+###Machine B
+host2_ip=172.16.53.70
+host2_port=8081
+host2_username_ip=fct@172.16.53.70
+host2_pwd=123
+host2_machine_num=2
 
 ########################################
 #------------Client Machine------------#
@@ -47,73 +54,18 @@ host1_machine_num=1
 jmeter_path=/home/fct/Downloads/Software/JMeter/apache-jmeter-4.0/bin
 jtl_splitter_path=/home/fct/Projects/ballerina-0-981-1/common
 
-jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-one/jtls
-jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-one/Chaining_One_DB_Test.jmx
-dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-one/dashboards
-uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-one
+jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two/jtls
+jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/chaining-with-db-two/Chaining_Two_DB_Test.jmx
+dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two/dashboards
+uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two
 
-performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machine/performance-report.py
-performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-one/summary_chaining_one_db
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_two_machines/performance-report.py
+performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/chaining-with-db-two/summary_chaining_two_db
 
 ########################################
 #------------Test Begins-------------#
 ########################################
-
-# Generating JTL files
-
-		for u in ${concurrent_users[@]}
-		do
-
-			total_users=$(($u))
-
-			report_location=$jtl_location/${total_users}_users
-			echo "Report location is ${report_location}"
-			mkdir -p $report_location
-			
-			#MachineA
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host1_ip}:${host1_port}/serviceNews/test)
-				if [ $response_code -eq 200 ]; then
-					echo "First Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-
-			echo "Begin test for ${u} users"
-			
-			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -n -t ${jmx_file} -l ${report_location}/results.jtl
-
-			# uptime
-			
-			echo "Running Uptime command in first"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${target_uptime_path}" &
-
-			echo "Completed Generating JTL files for ${u} users"
-		done
-
-	echo "Completed Generating JTL files"
-
-# Copying uptime logs
-
-	echo "Copying uptime logs of server machine to Jmeter client machine"
-
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-
-	echo "Finished Copying uptime logs to client machine"
-
-
+	
 # Split JTLs
 	
 echo "Splitting JTL files started"
