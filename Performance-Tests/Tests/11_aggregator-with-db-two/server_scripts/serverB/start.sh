@@ -20,4 +20,4 @@
 killall java
 
 echo "Starting ballerina service on port 8082"
-ballerina run /home/fct/Project/Builds/Ballerina/aggregator-with-db-caching-two/service-b.balx
+ballerina run /home/fct/Project/Builds/Ballerina/aggregator-with-db-two/service-b.balx
