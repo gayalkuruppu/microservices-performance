@@ -92,13 +92,10 @@ function getNewsFromDatabase() returns json{
                 var jsonConversionRet = <json>tableReturned;
                 match jsonConversionRet {
                     json jsonRes => {
-                        log:printDebug(jsonRes.toString());
-                        tableReturned.close();
                         return jsonRes;
                     }
                     error e => {
                         //log:printError(e.message);
-                        tableReturned.close();
                         return {"Error": "Internal Error"};
                     }
                 }
