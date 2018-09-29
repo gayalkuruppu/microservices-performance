@@ -30,10 +30,10 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-host1_ip=172.16.53.70
+host1_ip=###########
 host1_port=8080
-host1_username_ip=fct@172.16.53.70
-host1_pwd=123
+host1_username_ip=###########
+host1_pwd=###########
 
 target_script=/home/uok/Project/Builds/Ballerina/echo-with-payload/start.sh
 target_uptime_script=/home/uok/Project/Builds/Ballerina/echo-with-payload/uptime.sh

@@ -26,19 +26,6 @@ test_duration=120 #to be changed to 900
 split_time=1 #to be changed to 5
 
 ########################################
-#------------Host Machine--------------#
-########################################
-
-host1_ip=172.16.53.70
-host1_port=8080
-host1_username_ip=fct@172.16.53.70
-host1_pwd=123
-
-target_script=/home/uok/Project/Builds/Ballerina/echo/start.sh
-target_uptime_script=/home/uok/Project/Builds/Ballerina/echo/uptime.sh
-target_uptime_path=/home/uok/Project/Builds/Ballerina/echo/uptime_dir
-
-########################################
 #------------Client Machine------------#
 ########################################
 

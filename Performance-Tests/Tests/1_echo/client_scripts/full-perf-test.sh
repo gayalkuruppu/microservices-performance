@@ -29,30 +29,30 @@ split_time=1 #to be changed to 5
 #------------Host Machine--------------#
 ########################################
 
-host1_ip=172.16.53.70
+host1_ip=###########
 host1_port=8080
-host1_username_ip=fct@172.16.53.70
-host1_pwd=123
+host1_username_ip=###########
+host1_pwd=###########
 
-target_script=/home/uok/Project/Builds/Ballerina/echo/start.sh
-target_uptime_script=/home/uok/Project/Builds/Ballerina/echo/uptime.sh
-target_uptime_path=/home/uok/Project/Builds/Ballerina/echo/uptime_dir
+target_script=/home/fct/Project/Builds/Ballerina/echo/start.sh
+target_uptime_script=/home/fct/Project/Builds/Ballerina/echo/uptime.sh
+target_uptime_path=/home/fct/Project/Builds/Ballerina/echo/uptime_dir
 
 ########################################
 #------------Client Machine------------#
 ########################################
 
-jmeter_path=/home/uok/Downloads/Software/JMeter/apache-jmeter-4.0/bin
-jtl_splitter_path=/home/uok/Projects/ballerina-0-981-1/common
+jmeter_path=/home/fct/Downloads/Software/JMeter/apache-jmeter-4.0/bin
+jtl_splitter_path=/home/fct/Projects/ballerina-0-981-1/common
 
-jmx_file=/home/uok/Projects/ballerina-0-981-1/Tests/echo/Echo_Test.jmx
-jtl_location=/home/uok/Projects/ballerina-0-981-1/Results/echo/jtls
-dashboards_path=/home/uok/Projects/ballerina-0-981-1/Results/echo/dashboards
-uptime_path=/home/uok/Projects/ballerina-0-981-1/Results/echo
+jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/echo/Echo_Test.jmx
+jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/echo/jtls
+dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/echo/dashboards
+uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/echo
 
-performance_report_python_file=/home/uok/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machine/performance-report.py
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/NoMsg/with_single_machine/performance-report.py
 
-performance_report_output_file=/home/uok/Projects/ballerina-0-981-1/Results/echo/summary_echo
+performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/echo/summary_echo
 
 ########################################
 #------------Test Begins-------------#
