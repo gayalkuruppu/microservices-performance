@@ -7,9 +7,8 @@ import wso2/redis;
 
 endpoint http:Client clientEndpoint {
     url: "http://172.16.53.70:8081/serviceSports"
+	//url: "http://localhost:8081/serviceSports"
 };
-//url: "http://172.16.53.70:8081/serviceSports"
-//url: "http://localhost:8081/serviceSports"
 
 // Mysql as the database
 endpoint mysql:Client testDB {
@@ -116,13 +115,10 @@ function getNewsFromDatabase() returns json{
                 var jsonConversionRet = <json>tableReturned;
                 match jsonConversionRet {
                     json jsonRes => {
-                        log:printDebug(jsonRes.toString());
-                        tableReturned.close();
                         return jsonRes;
                     }
                     error e => {
                         //log:printError(e.message);
-                        tableReturned.close();
                         return {"Error": "Internal Error"};
                     }
                 }
