@@ -5,9 +5,9 @@ import ballerina/io;
 
 endpoint http:Client clientEndpoint {
     url: "http://172.16.53.70:8082/serviceSports"
+	//url: "http://localhost:8082/serviceSports"
 };
-//url: "http://172.16.53.70:8082/serviceSports"
-//url: "http://localhost:8082/serviceSports"
+
 endpoint mysql:Client testDB {
     host: "localhost",
     port: 3306,
@@ -45,15 +45,11 @@ service<http:Service> servicePolitical bind { port: 8081 } {
                     var jsonConversionRet = <json>tableReturned;
                     match jsonConversionRet {
                         json jsonRes => {
-                            json ans = jsonRes;
-                            log:printDebug(jsonRes.toString());
-                            if(ans.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
+                            if(jsonRes.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
                                 res.statusCode = 500;
                                 res.setPayload("Internal Error");
-                                tableReturned.close();
                             } else {
                                 res.setPayload({"PoliticalNews":untaint ans, "SportsNews":untaint sportsNews});
-                                tableReturned.close();
                             }
                         }
                         error e => {

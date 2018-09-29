@@ -34,7 +34,6 @@ service<http:Service> serviceFamousPolitical bind { port: 8080 } {
 
         try {
             var selectRet = testDB->select("SELECT * FROM type1NewsDb.news;", ());
-            //table dt;
             //json returnValue;
             match selectRet {
                 table tableReturned => {
@@ -42,20 +41,15 @@ service<http:Service> serviceFamousPolitical bind { port: 8080 } {
                     var jsonConversionRet = <json>tableReturned;
                     match jsonConversionRet {
                         json jsonRes => {
-                            json ans = jsonRes;
-                            log:printDebug(jsonRes.toString());
-                            if(ans.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
+                            if(jsonRes.toString().contains("Internal Error") || sportsNews.toString().contains("Internal Error")){
                                 res.statusCode = 500;
                                 res.setPayload("Internal Error");
-                                tableReturned.close();
                             } else {
-                                res.setPayload({"PoliticalFamousNews":untaint ans, "SportsNews":untaint sportsNews});
-                                tableReturned.close();
+                                res.setPayload({"PoliticalFamousNews":untaint jsonRes, "SportsNews":untaint sportsNews});
                             }
                         }
                         error e => {
                             //log:printError(e.message);
-                            tableReturned.close();
                             res.statusCode = 500;
                             res.setPayload({"Error": "Internal Error"});
                         }

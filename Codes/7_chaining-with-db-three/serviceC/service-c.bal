@@ -28,15 +28,12 @@ service<http:Service> serviceSports bind { port: 8082 } {
                     var jsonConversionRet = <json>tableReturned;
                     match jsonConversionRet {
                         json jsonRes => {
-                            log:printDebug(jsonRes.toString());
                             res.setPayload(untaint jsonRes);
-                            tableReturned.close();
                         }
                         error e => {
                             //log:printError(e.message);
                             res.statusCode = 500;
                             res.setPayload({"Error": "Internal Error"});
-                            tableReturned.close();
                         }
                     }
                 }
