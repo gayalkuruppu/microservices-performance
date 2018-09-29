@@ -26,20 +26,6 @@ test_duration=900 #to be changed to 900
 split_time=5 #to be changed to 5
 
 ########################################
-#------------Host Machine--------------#
-########################################
-
-target_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-one/start.sh
-target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-one/uptime.sh
-target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-one/uptime_dir
-
-###Machine A
-host1_ip=172.16.53.70
-host1_port=8080
-host1_username_ip=fct@172.16.53.70
-host1_pwd=123
-
-########################################
 #------------Client Machine------------#
 ########################################
 

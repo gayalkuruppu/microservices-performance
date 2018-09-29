@@ -34,10 +34,10 @@ target_uptime_script=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching
 target_uptime_path=/home/fct/Project/Builds/Ballerina/chaining-with-db-caching-one/uptime_dir
 
 ###Machine A
-host1_ip=172.16.53.70
+host1_ip=#########
 host1_port=8080
-host1_username_ip=fct@172.16.53.70
-host1_pwd=123
+host1_username_ip=#########
+host1_pwd=#########
 
 ########################################
 #------------Client Machine------------#
