@@ -3,65 +3,42 @@ import ballerina/log;
 import ballerina/io;
 import ballerina/internal;
 
-endpoint http:Client clientEndpointFamousPolitical {
-    //url: "http://172.16.53.76:8081/serviceFamousPolitical"
-    url: "http://localhost:8081/serviceFamousPolitical"
+
+endpoint http:Listener proxy{
+    port:9090
 };
-
-endpoint http:Client clientEndpointSports {
-    //url: "http://172.16.53.70:8082/serviceSports"
-    url: "http://localhost:8082/serviceSports"
-};
-
-service<http:Service> serviceProxy bind { port: 8080 } {
-
+@http:ServiceConfig {
+    basePath: "/*"
+}
+service<http:Service> serviceProxy bind proxy {
     @http:ResourceConfig {
-        methods: ["GET"],
-        path: "/{resourcepath}"
+        path: "/*"
     }
-    getFamousAndPoliticalNews(endpoint caller, http:Request req, string resourcepath) {
-        if(resourcepath.contains("famouspoliticalnews")){
-            //io:println("proxy1");
-            var clientFamousPoliticalResponse = clientEndpointFamousPolitical->forward("/getAll", req);
-            
-            match clientFamousPoliticalResponse{
-                http:Response resp => {
-                    _ = caller -> respond(resp);
-                }
-                error err => {
-                    http:Response res = new;
-                    res.statusCode = 500;
-                    res.setPayload(err.message);
-                    _ = caller -> respond(res);
-                    //log:printError("Error sending response", e);
-                }
-            }
-        } else if (resourcepath.contains("sportsnews")){
-            //io:println("proxy2");
-            var clientSportsResponse = clientEndpointSports->forward("/getAll", req);
+    proxyMethod (endpoint conn, http:Request req){
+        string url = untaint req.rawPath;
+        sendRequest(url, req, conn);
+    }
+}
 
-            match clientSportsResponse {
-                http:Response resp => {
-                    _ = caller -> respond(resp);
-                }
-                error err => {
-                    http:Response res = new;
-                    res.statusCode = 500;
-                    res.setPayload(err.message);
-                    _ = caller -> respond(res);
-                    //log:printError("Error sending response", e);
-                }
-            }
+function defineEndpointWithProxy (string url) returns http:Client {
+    endpoint http:Client httpEndpoint {
+        url: url
+    };
+    return httpEndpoint;
+}
+
+function sendRequest(string url, http:Request req, http:Listener conn) {
+    endpoint http:Client clientEP = defineEndpointWithProxy(url);
+    endpoint http:Listener listenerEP = conn;
+    var response = clientEP->forward("", req);
+    match response {
+        http:Response httpResponse => {
+            _ = listenerEP->respond(httpResponse);
         }
-    }
-
-    @http:ResourceConfig {
-        methods: ["GET"],
-        path:"test"
-    }
-    testService(endpoint caller, http:Request req) {
-        http:Response res = new;
-        res.setPayload("hello, this is proxy service");
-        _ = caller -> respond(res);
+        http:error err => {
+            http:Response errorResponse = new;
+            errorResponse.setTextPayload(err.message);
+            _ = listenerEP->respond(errorResponse);
+        }
     }
 }
