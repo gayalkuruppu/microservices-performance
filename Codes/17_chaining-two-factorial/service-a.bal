@@ -47,9 +47,10 @@ service<http:Service> PrimeServiceOne bind { port: 8080 } {
                 //log:printInfo(<string>uBoundryServiceTwo);
                 //log:printInfo("yes");
                 boolean ans = isPrime(number,lBoundryServiceOne,uBoundryServiceOne);
-
+                log:printInfo(<string>ans);
                 if(ans){
                     string path="/check?number="+number+"&lower="+lBoundryServiceTwo+"&upper="+uBoundryServiceTwo;
+                    log:printInfo("true");
 
                     var responseTwo = clientEndpoint->get(untaint path);
 
@@ -57,7 +58,7 @@ service<http:Service> PrimeServiceOne bind { port: 8080 } {
                     match responseTwo {
                         http:Response resp => {
                             respTwo = check resp.getJsonPayload();
-                            //log:printInfo(respTwo.toString());
+                            log:printInfo(respTwo.toString());
                             res.setJsonPayload(untaint respTwo);
                         }
                         error err => {
@@ -66,6 +67,7 @@ service<http:Service> PrimeServiceOne bind { port: 8080 } {
                         }
                     }
                 } else {
+                    log:printInfo("false");
                     res.setJsonPayload({"isPrime":ans});
                 }
             }
