@@ -22,7 +22,7 @@
 ########################################
 
 concurrent_users=(1 2 50 100 300 500 700 1000) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(517 7919 1000003)
+message_sizes=(521 7919 10007)
 test_duration=900 #to be changed to 900
 split_time=5 #to be changed to 5
 
