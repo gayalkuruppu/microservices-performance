@@ -22,100 +22,80 @@
 ########################################
 
 concurrent_users=(1 2 50 100 300 500 700 1000) #to be changed 1 2 50 100 300 500 700 1000 
-message_sizes=(517 7919 1000003)
+message_sizes=(521) #7919 10007
 test_duration=900 #to be changed to 900
 split_time=5 #to be changed to 5
 
 ########################################
 #------------Host Machine--------------#
 ########################################
-
 target_script=/home/fct/Project/Builds/Ballerina/factorial-chaining-one/start.sh
 target_uptime_script=/home/fct/Project/Builds/Ballerina/factorial-chaining-one/uptime.sh
 target_uptime_path=/home/fct/Project/Builds/Ballerina/factorial-chaining-one/uptime_dir
 
-###Machine A
-host1_ip=172.16.53.54
-host1_port=8080
-host1_username_ip=fct@172.16.53.54
-host1_pwd=123
-host1_machine_num=1
 
 ########################################
 #------------Client Machine------------#
 ########################################
 
 jmeter_path=/home/fct/Downloads/Software/JMeter/apache-jmeter-4.0/bin
+jtl_splitter_path=/home/fct/Projects/ballerina-0-981-1/common
 
 jtl_location=/home/fct/Projects/ballerina-0-981-1/Results/factorial-chaining-one/jtls
-jmx_file=/home/fct/Projects/ballerina-0-981-1/Tests/factorial-chaining-one/Chaining_Two_Factorial_Test.jmx
+dashboards_path=/home/fct/Projects/ballerina-0-981-1/Results/factorial-chaining-one/dashboards
 uptime_path=/home/fct/Projects/ballerina-0-981-1/Results/factorial-chaining-one
+
+performance_report_python_file=/home/fct/Projects/ballerina-0-981-1/common/python/with_single_machine/performance-report-fact.py
+performance_report_output_file=/home/fct/Projects/ballerina-0-981-1/Results/factorial-chaining-one/summary_chaining_one_fact.csv
 
 ########################################
 #------------Test Begins-------------#
 ########################################
+	
+# Split JTLs
+	
+echo "Splitting JTL files started"
 
-# Generating JTL files
-for size in ${message_sizes[@]}
+	for size in ${message_sizes[@]}
 	do
-		echo "Tests for ${size} size message"
-
 		for u in ${concurrent_users[@]}
 		do
-
 			total_users=$(($u))
+			jtl_file=${jtl_location}/${size}_message/${total_users}_users/results.jtl
 
-			report_location=$jtl_location/${size}_message/${total_users}_users
-			echo "Report location is ${report_location}"
-			mkdir -p $report_location
-			
-			#MachineA
-			#SSH
-			echo "begin SSH"
-			nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
+			java -jar ${jtl_splitter_path}/jtl-splitter-0.1.1-SNAPSHOT.jar -f $jtl_file -t ${split_time} -d	
 
-			#Check Service
-			while true 
-			do
-				echo "Checking service"
-				response_code=$(curl -s -o /dev/null -w "%{http_code}" -X GET http://${host1_ip}:${host1_port}/prime/test)
-				if [ $response_code -eq 200 ]; then
-					echo "First Ballerina service has started"
-					break
-				else
-					sleep 10
-					echo "Retrying..."
-					nohup sshpass -p ${host1_pwd} ssh -n ${host1_username_ip} -f "/bin/bash $target_script" &
-				fi
-			done
-			
-
-			echo "Begin test for ${u} users and ${size} size message"
-
-			# Start JMeter server
-			
-			${jmeter_path}/jmeter -Jgroup1.host=${host1_ip} -Jgroup1.port=${host1_port} -Jgroup1.threads=$u -Jgroup1.seconds=${test_duration} -Jgroup1.data=${size} -n -t ${jmx_file} -l ${report_location}/results.jtl
-
-			# uptime
-			
-			echo "Running Uptime command in first"	
-			nohup sshpass -p ${host1_pwd} ssh -n -f ${host1_username_ip} "/bin/bash $target_uptime_script ${total_users} ${size} ${target_uptime_path} ${host1_machine_num}" &
-			
-			echo "Completed Generating JTL files for ${u} users and ${size} size message"
+			echo "Splitting jtl file for ${size} and ${u} users test completed"
 		done
-
-		echo "Completed tests for ${size} size message"
-
 	done
 
-	echo "Completed Generating JTL files"
+echo "Splitting JTL files Completed"
 
-# Copying uptime logs
 
-	echo "Copying uptime logs of first machine to Jmeter client machine"
+echo "Generating Dashboards"
 
-	mkdir -p ${uptime_path}
-	sshpass -p ${host1_pwd} scp -r ${host1_username_ip}:${target_uptime_path} ${uptime_path}
-	
+for size in ${message_sizes[@]}
+do
+	for u in ${concurrent_users[@]}
+	do	
+		total_users=$(($u))
+		report_location=${dashboards_path}/${size}_message/${total_users}_users
+		echo "Report location is ${report_location}"
+		mkdir -p $report_location
+		
+		${jmeter_path}/jmeter -g  ${jtl_location}/${size}_message/${total_users}_users/results-measurement.jtl -o $report_location	
 
-echo "Finished Copying uptime logs to client machine"
+		echo "Generating dashboard for ${size} and ${u} users test completed"
+	done
+done
+
+echo "Generating Dashboards Completed"
+
+# Generate CSV
+
+echo "Generating the CSV file"
+
+python3 $performance_report_python_file $dashboards_path $uptime_path $performance_report_output_file
+
+echo "Finished generating CSV file"
+
